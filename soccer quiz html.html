@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⚽ Ultimate Soccer Quiz Challenge</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto&display=swap');
+
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?auto=format&fit=crop&w=1470&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-shadow: 1px 1px 4px #000;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.75);
+      padding: 30px 40px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.9);
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #f9d71c; /* soccer yellow */
+      text-shadow: 0 0 10px #f9d71c;
+    }
+
+    #start-container p {
+      font-size: 1.2rem;
+      margin: 10px 0 30px 0;
+      color: #ccc;
+    }
+
+    input[type="text"] {
+      font-size: 1.3rem;
+      padding: 15px 12px;
+      width: 90%;
+      max-width: 400px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      transition: 0.3s ease;
+      text-align: center;
+      font-weight: bold;
+      color: #222;
+    }
+
+    input[type="text"]::placeholder {
+      color: #999;
+      font-weight: normal;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 8px 3px #f9d71c;
+      background-color: #fff;
+    }
+
+    button {
+      margin-top: 25px;
+      background: #f9d71c;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      color: #000;
+      box-shadow: 0 0 15px #f9d71c;
+      transition: background 0.3s ease;
+    }
+
+    button:disabled {
+      background: #b9b900;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #555;
+    }
+
+    button:hover:not(:disabled) {
+      background: #fff000;
+      box-shadow: 0 0 20px #fff000;
+    }
+
+    /* Soccer ball bounce */
+    #soccer-ball {
+      font-size: 6rem;
+      animation: bounce 2s infinite ease-in-out;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-25px);
+      }
+    }
+
+    /* Quiz container styles */
+    #quiz-container, #score-container {
+      background-color: rgba(255,255,255,0.95);
+      color: #0b3d91;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    #quiz-container h2, #score-container h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: #0b3d91;
+      margin-bottom: 15px;
+    }
+
+    #welcome-message {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    #timer {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #d32f2f;
+      text-shadow: none;
+    }
+
+    #question-container {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    #options-container button.option-button {
+      display: block;
+      width: 100%;
+      background-color: #2196f3;
+      color: white;
+      margin: 8px 0;
+      font-size: 1.1rem;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    #options-container button.option-button:hover:not(:disabled) {
+      background-color: #0b71d0;
+    }
+
+    #options-container button.option-button.correct {
+      background-color: #4caf50 !important;
+      color: white;
+      cursor: default;
+      box-shadow: 0 0 10px #4caf50;
+    }
+
+    #options-container button.option-button.incorrect {
+      background-color: #f44336 !important;
+      color: white;
+      cursor: default;
+      box-shadow: 0 0 10px #f44336;
+    }
+
+    #next-button, #restart-button {
+      background-color: #0b3d91;
+      color: white;
+      padding: 12px 25px;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+      box-shadow: 0 0 15px #0b3d91;
+      transition: background-color 0.3s ease;
+    }
+
+    #next-button:hover, #restart-button:hover {
+      background-color: #063170;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #score-container p {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Start Screen -->
+  <div id="start-container" class="container">
+    <div id="soccer-ball">⚽</div>
+    <h1>Ultimate Soccer Quiz Challenge</h1>
+    <p>Test your soccer knowledge! Enter your name and start the game.</p>
+    <input type="text" id="name-input" placeholder="Enter your name here" autocomplete="off" />
+    <br />
+    <button id="start-button" disabled>Start Quiz</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz-container" class="container hidden">
+    <h2 id="welcome-message"></h2>
+    <div id="timer">Time Left: 60s</div>
+    <div id="question-container"></div>
+    <div id="options-container"></div>
+    <button id="next-button" class="hidden">Next Question</button>
+  </div>
+
+  <!-- Score Screen -->
+  <div id="score-container" class="container hidden">
+    <h2>🏁 Quiz Completed!</h2>
+    <p id="score"></p>
+    <button id="restart-button">Restart Quiz</button>
+  </div>
+
+  <!-- Sounds -->
+  <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="incorrect-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+
+  <script>
+    const quizData = [
+      {
+        question: "Which country has won the most FIFA World Cups?",
+        options: ["Germany", "Argentina", "Brazil", "Italy"],
+        answer: 2
+      },
+      {
+        question: "Who is known as 'The King of Football'?",
+        options: ["Cristiano Ronaldo", "Diego Maradona", "Lionel Messi", "Pelé"],
+        answer: 3
+      },
+      {
+        question: "How many players are on the field for one team during a match?",
+        options: ["10", "11", "12", "9"],
+        answer: 1
+      },
+      {
+        question: "Which club has won the most UEFA Champions League titles?",
+        options: ["Manchester United", "AC Milan", "Real Madrid", "Barcelona"],
+        answer: 2
+      },
+      {
+        question: "What does 'VAR' stand for in football?",
+        options: [
+          "Video Assistant Referee",
+          "Virtual Action Replay",
+          "Verified Assistant Referee",
+          "Video Analysis Room"
+        ],
+        answer: 0
+      }
+    ];
+
+    // Utility function to shuffle an array in-place (Fisher-Yates)
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Elements
+    const startContainer = document.getElementById("start-container");
+    const quizContainer = document.getElementById("quiz-container");
+    const scoreContainer = document.getElementById("score-container");
+    const nameInput = document.getElementById("name-input");
+    const startButton = document.getElementById("start-button");
+    const welcomeMessage = document.getElementById("welcome-message");
+    const timerEl = document.getElementById("timer");
+    const questionContainer = document.getElementById("question-container");
+    const optionsContainer = document.getElementById("options-container");
+    const nextButton = document.getElementById("next-button");
+    const scoreText = document.getElementById("score");
+    const restartButton = document.getElementById("restart-button");
+    const correctSound = document.getElementById("correct-sound");
+    const incorrectSound = document.getElementById("incorrect-sound");
+
+    // State
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let timer;
+    let timeLeft = 60;
+    let playerName = "";
+    let shuffledQuizData = [];
+
+    // Enable start button when name input is not empty
+    nameInput.addEventListener('input', () => {
+      startButton.disabled = nameInput.value.trim() === "";
+    });
+
+    startButton.addEventListener("click", () => {
+      playerName = nameInput.value.trim();
+      if (!playerName) return;
+
+      // Shuffle questions and options here
+      shuffledQuizData = shuffleArray([...quizData]).map(q => {
+        // Shuffle options and keep track of the correct answer
+        const optionsWithIndex = q.options.map((option, index) => ({ option, index }));
+        shuffleArray(optionsWithIndex);
+        const newOptions = optionsWithIndex.map(o => o.option);
+        const newAnswerIndex = optionsWithIndex.findIndex(o => o.index === q.answer);
+
+        return {
+          question: q.question,
+          options: newOptions,
+          answer: newAnswerIndex
+        };
+      });
+
+      startContainer.classList.add("hidden");
+      quizContainer.classList.remove("hidden");
+
+      welcomeMessage.textContent = `Good luck, ${playerName}!`;
+      currentQuestionIndex = 0;
+      score = 0;
+      loadQuestion();
+      startTimer();
+    });
+
+    function loadQuestion() {
+      clearOptions();
+      answered = false;
+      timeLeft = 60;
+      updateTimerDisplay();
+
+      const currentQuestion = shuffledQuizData[currentQuestionIndex];
+      questionContainer.textContent = currentQuestion.question;
+
+      currentQuestion.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.classList.add("option-button");
+        btn.disabled = false;
+        btn.addEventListener("click", () => handleAnswer(index));
+        optionsContainer.appendChild(btn);
+      });
+
+      nextButton.classList.add("hidden");
+      startTimer();
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (answered) return;
+
+      answered = true;
+      clearInterval(timer);
+
+      const buttons = optionsContainer.querySelectorAll("button");
+      const correctIndex = shuffledQuizData[currentQuestionIndex].answer;
+
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+
+        if (index === correctIndex) {
+          btn.classList.add("correct");
+        }
+
+        if (index === selectedIndex && selectedIndex !== correctIndex) {
+          btn.classList.add("incorrect");
+        }
+      });
+
+      if (selectedIndex === correctIndex) {
+        score++;
+        playSound(true);
+      } else {
+        playSound(false);
+      }
+
+      nextButton.classList.remove("hidden");
+    }
+
+    nextButton.addEventListener("click", () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < shuffledQuizData.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    });
+
+    restartButton.addEventListener("click", () => {
+      scoreContainer.classList.add("hidden");
+      startContainer.classList.remove("hidden");
+      nameInput.value = "";
+      startButton.disabled = true;
+    });
+
+    function showScore() {
+      quizContainer.classList.add("hidden");
+      scoreContainer.classList.remove("hidden");
+
+      const percentage = Math.round((score / shuffledQuizData.length) * 100);
+
+      let message = "";
+      if (score === shuffledQuizData.length) {
+        message = `🎉 <strong>Congratulations, ${playerName}!</strong> You got 100%!<br>You scored ${score} out of ${shuffledQuizData.length} (${percentage}%)`;
+      } else {
+        message = `Better luck next time, ${playerName}!<br>You scored ${score} out of ${shuffledQuizData.length} (${percentage}%)`;
+      }
+      scoreText.innerHTML = message;
+    }
+
+    function clearOptions() {
+      optionsContainer.innerHTML = "";
+      clearInterval(timer);
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      updateTimerDisplay();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          if (!answered) {
+            forceAnswer();
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timerEl.textContent = `Time Left: ${timeLeft}s`;
+    }
+
+    function forceAnswer() {
+      answered = true;
+      const buttons = optionsContainer.querySelectorAll("button");
+      const correctIndex = shuffledQuizData[currentQuestionIndex].answer;
+
+      buttons.forEach((btn, index) => {
+        btn.disabled = true;
+
+        if (index === correctIndex) {
+          btn.classList.add("correct");
+        }
+      });
+
+      playSound(false);
+      nextButton.classList.remove("hidden");
+    }
+
+    function playSound(isCorrect) {
+      if (isCorrect) {
+        correctSound.currentTime = 0;
+        correctSound.play();
+      } else {
+        incorrectSound.currentTime = 0;
+        incorrectSound.play();
+      }
+    }
+  </script>
+
+</body>
+</html>
